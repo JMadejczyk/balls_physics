@@ -138,7 +138,7 @@ class Ball(pygame.sprite.Sprite):
             self.x = self.x_prev
             self.vector[0] = -self.vector[0]
             self.vector[1] = -self.vector[1]
-            self.speed -= 0.05
+            # self.speed -= 0.05
             # print(self.speed)
             self.vy = -self.vy
             # self.ay += 0.03
@@ -152,7 +152,7 @@ class Ball(pygame.sprite.Sprite):
         print(self.colided)
         if self.check_collision_with_ball(ball) and not self.check_collision_with_box(box) and self.colided == False:
             self.colided = True
-            self.speed -= 0.05
+            # self.speed -= 0.05
             # print(self.speed)
             collision_sound.play()
             line = find_symmetrical_line((self.x, self.y), (ball.x, ball.y))
