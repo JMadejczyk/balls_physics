@@ -6,6 +6,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (255, 0, 0)
+BLUE = (0, 0, 255)
  
 pygame.init()
 pygame.mixer.init()
@@ -71,6 +72,8 @@ def shorten_vector(vector, length):
         return shortened_vector    
 
 
+
+
 class Box(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -85,7 +88,7 @@ class Box(pygame.sprite.Sprite):
 
 
 class Ball(pygame.sprite.Sprite):
-    def __init__(self, x, y, vector=[5, 2]):
+    def __init__(self, x, y, vector=[5, 2], color=RED):
         super().__init__()
         
         self.x = x
@@ -94,15 +97,24 @@ class Ball(pygame.sprite.Sprite):
         self.x_prev = self.x
 
         self.radius = 20
-        self.color = RED
+        self.color = color
         self.vy = 0 # velocity in y direction
-        self.ay = 0.2 # acceleration in y direction
+        # self.ay = 0 # acceleration in y direction
+        self.ay = 0.4 # acceleration in y direction
+        self.speed = 7
+
 
         self.colided = False
         self.vector = vector
         
     def draw(self, screen):
         pygame.draw.circle(screen, self.color, [self.x, self.y], self.radius)
+        # print(self.vector)
+    
+    def stop(self):
+        print("STOP")
+        # self.vy = 0
+        # self.ay = 0
 
     def check_collision_with_box(self, box):
         distance_from_box_center = ((self.x - box.x)**2 + (self.y - box.y)**2)**0.5
@@ -115,8 +127,8 @@ class Ball(pygame.sprite.Sprite):
         self.vy += self.ay # Update y velocity with acceleration
         self.y += self.vy # Update y position with velocity
 
-        speed = 7
-        self.vector = shorten_vector(self.vector, speed)
+        # speed = 7
+        self.vector = shorten_vector(self.vector, self.speed)
         self.x += self.vector[0]
         self.y += self.vector[1]
         # print(self.vector)
@@ -126,7 +138,8 @@ class Ball(pygame.sprite.Sprite):
             self.x = self.x_prev
             self.vector[0] = -self.vector[0]
             self.vector[1] = -self.vector[1]
-
+            self.speed -= 0.05
+            # print(self.speed)
             self.vy = -self.vy
             # self.ay += 0.03
 
@@ -136,8 +149,11 @@ class Ball(pygame.sprite.Sprite):
         return distance < self.radius + ball.radius
 
     def update_vector_after_collision(self, ball):
+        print(self.colided)
         if self.check_collision_with_ball(ball) and not self.check_collision_with_box(box) and self.colided == False:
             self.colided = True
+            self.speed -= 0.05
+            # print(self.speed)
             collision_sound.play()
             line = find_symmetrical_line((self.x, self.y), (ball.x, ball.y))
             a, b = line
@@ -155,7 +171,7 @@ class Ball(pygame.sprite.Sprite):
 done = False
 clock = pygame.time.Clock()
 ball = Ball(350, 250, [8, 3])
-ball2 = Ball(300, 235, [3, 5])
+ball2 = Ball(300, 235, [3, 5], "BLUE")
 box = Box()
  
 # -------- Main Program Loop -----------
